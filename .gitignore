@@ -9,3 +9,4 @@ prisma/migrations/
 # Ignore generated Prisma files but keep schema and migrations structure
 backend/prisma/migrations/*/migration.sql
 backend/prisma/generated/
+.DS_Store
