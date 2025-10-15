@@ -1,26 +1,57 @@
 import { Request, Response } from "express";
 import { StepService } from "../services/stepService";
+import { createStepSchema, updateStepSchema } from "../validation/stepSchemas";
 
 export const StepController = {
   async create(req: Request, res: Response) {
     try {
-      const runId = Number(req.params.runId);
-      const step = await StepService.createStep({ ...req.body, runId });
-      res.status(201).json(step);
+      const parseResult = createStepSchema.safeParse(req.body);
+      if (!parseResult.success) {
+        return res.status(400).json({
+          error: "Invalid input",
+          details: parseResult.error.issues,
+        });
+      }
+
+      const step = await StepService.createStep({
+        runId: Number(req.params.runId),
+        ...parseResult.data,
+        startedAt: new Date(parseResult.data.startedAt),
+      });
+
+      return res.status(201).json(step);
     } catch (err) {
       console.error(err);
-      res.status(500).json({ error: "Failed to create step" });
+      return res.status(500).json({ error: "Failed to create step" });
     }
   },
 
   async update(req: Request, res: Response) {
     try {
-      const stepId = Number(req.params.stepId);
-      const step = await StepService.updateStep(stepId, req.body);
-      res.json(step);
+      const parseResult = updateStepSchema.safeParse(req.body);
+      if (!parseResult.success) {
+        return res.status(400).json({
+          error: "Invalid input",
+          details: parseResult.error.issues,
+        });
+      }
+
+      const updateData = {
+        ...parseResult.data,
+        finishedAt: parseResult.data.finishedAt
+          ? new Date(parseResult.data.finishedAt)
+          : undefined,
+      };
+
+      const step = await StepService.updateStep(
+        Number(req.params.stepId),
+        updateData
+      );
+
+      return res.status(200).json(step);
     } catch (err) {
       console.error(err);
-      res.status(500).json({ error: "Failed to update step" });
+      return res.status(500).json({ error: "Failed to update step" });
     }
   },
 };

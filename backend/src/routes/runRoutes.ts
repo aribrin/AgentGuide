@@ -26,4 +26,8 @@ router.patch(
   StepController.update
 );
 
+// --- LIST RUNS ---
+router.get("/runs", RunController.list);
+
+
 export default router;

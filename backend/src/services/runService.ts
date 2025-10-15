@@ -42,6 +42,26 @@ export const RunService = {
             data,
         });
     },
+
+
+    async listRuns(filters: {
+    agentId?: number;
+    status?: string;
+    limit?: number;
+    offset?: number;
+    }) {
+    return prisma.run.findMany({
+        where: {
+        ...(filters.agentId ? { agentId: filters.agentId } : {}),
+        ...(filters.status ? { status: filters.status as any } : {}),
+        },
+        include: { agent: true },
+        orderBy: { createdAt: "desc" },
+        take: filters.limit,
+        skip: filters.offset,
+    });
+    }
+
 }
 
     
