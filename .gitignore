@@ -5,4 +5,7 @@
 node_modules
 package-lock.json
 prisma/migrations/
-backend/prisma
+
+# Ignore generated Prisma files but keep schema and migrations structure
+backend/prisma/migrations/*/migration.sql
+backend/prisma/generated/

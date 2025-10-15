@@ -1,0 +1,82 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+
+model User {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  name      String?
+  apiKeys   String? @unique
+  createdAt DateTime @default(now())
+  runs      Run[]
+}
+
+model Agent{
+    id        Int      @id @default(autoincrement())
+    name      String
+    version   String?
+    description String?
+    runs      Run[]
+}
+
+model Run {
+  id          Int      @id @default(autoincrement())
+  agent       Agent    @relation(fields: [agentId], references: [id])
+  agentId     Int
+  user        User?     @relation(fields: [userId], references: [id])
+  userId      Int?
+  status      RunStatus @default(PENDING)
+  input       Json
+  output      Json?
+  startedAt   DateTime @default(now())
+  finishedAt  DateTime?
+  steps       Step[]
+  metrics     Metric[]
+  createdAt   DateTime @default(now())
+}
+
+model Step {
+  id          Int       @id @default(autoincrement())
+  run         Run       @relation(fields: [runId], references: [id])
+  runId       Int
+  index       Int
+  toolName    String
+  input       Json
+  output      Json?
+  error       String?
+  startedAt   DateTime
+  finishedAt  DateTime?
+  artifacts   Artifact[]
+}
+
+model Artifact {
+  id        Int    @id @default(autoincrement())
+  step      Step   @relation(fields: [stepId], references: [id])
+  stepId    Int
+  type      String
+  url       String?
+  content   Json?
+}
+
+model Metric {
+  id     Int    @id @default(autoincrement())
+  run    Run    @relation(fields: [runId], references: [id])
+  runId  Int
+  name   String
+  value  Float
+  tags   Json?
+}
+
+enum RunStatus {
+  PENDING
+  RUNNING
+  SUCCESS
+  FAILED
+  CANCELLED
+}
