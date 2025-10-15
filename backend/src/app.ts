@@ -1,5 +1,7 @@
-import express = require('express');
+import express from 'express';
 import agentRoutes from './routes/agentRoutes';
+import runRoutes from "./routes/runRoutes";
+
 
 const app = express();
 
@@ -7,6 +9,8 @@ const app = express();
 app.use(express.json());
 
 // Use the agent routes
-app.use('/agents', agentRoutes);
+app.use('/v1/agents', agentRoutes);
+app.use("/v1", runRoutes);
+
 
 export default app;

@@ -1,25 +1,20 @@
 import { Request, Response } from "express";
-import prisma from "../prisma/client";
+import { agentService } from "../services/agentService";
 
-export const getAgents = async (req: Request, res: Response) => {
-    try {
-        const agents = await prisma.agent.findMany();
-        res.json(agents);
-    } catch (error) {
-        console.error("Error fetching agents:", error);
-        res.status(500).json({ error: "Internal Server Error" });
-    }
+export const getAllAgents = async (req: Request, res: Response) => {
+  try {
+    const agents = await agentService.getAllAgents();
+    res.json(agents);
+  } catch (err) {
+    res.status(500).json({ error: "Failed to fetch agents" });
+  }
 };
 
 export const createAgent = async (req: Request, res: Response) => {
-    try {
-        const { name, version, description } = req.body;
-        const newAgent = await prisma.agent.create({
-            data: { name, version, description }, 
-        });
-        res.status(201).json(newAgent);
-    } catch (error) {
-        console.error("Error creating agent:", error);
-        res.status(500).json({ error: "Internal Server Error" });
-    }
+  try {
+    const agent = await agentService.createAgent(req.body);
+    res.status(201).json(agent);
+  } catch (err) {
+    res.status(400).json({ error: "Failed to create agent" });
+  }
 };
