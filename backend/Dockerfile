@@ -1,44 +1,21 @@
-# Stage 1: Build
-FROM node:20-alpine AS builder
-
-WORKDIR /app
-
-# Copy package files
-COPY package*.json ./
-COPY tsconfig.json ./
-
-# Install ALL dependencies (including dev dependencies for TypeScript compilation)
-RUN npm ci
-
-# Copy source code
-COPY . .
-
-# Generate Prisma Client
-RUN npx prisma generate
-
-# Build TypeScript to JavaScript
-RUN npm run build
-
-# Stage 2: Production
 FROM node:20-alpine
 
 WORKDIR /app
 
-# Copy package files
+# Copy package files first for better caching
 COPY package*.json ./
 
-# Install ONLY production dependencies
-RUN npm ci --only=production
+# Install all dependencies (including dev dependencies for ts-node)
+RUN npm install
 
-# Copy Prisma schema and generate client
-COPY prisma ./prisma
+# Copy all source code
+COPY . .
+
+# Generate Prisma client
 RUN npx prisma generate
 
-# Copy compiled JavaScript from builder stage
-COPY --from=builder /app/dist ./dist
+# Expose port (matches your local dev server)
+EXPOSE 3000
 
-# Expose the port your app runs on
-EXPOSE 4000
-
-# Run migrations and start the server
-CMD ["sh", "-c", "npx prisma migrate deploy && node dist/server.js"]
+# Run the same command that works locally
+CMD ["npx", "ts-node", "src/server.ts"]

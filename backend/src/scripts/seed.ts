@@ -3,9 +3,10 @@ import { prisma } from "../prisma/client";
 async function seed() {
   console.log("🌱 Seeding database...");
 
-  await prisma.agent.deleteMany();
-  await prisma.user.deleteMany();
-  await prisma.run.deleteMany();
+  // Delete in correct order (respecting foreign key constraints)
+  await prisma.run.deleteMany();      // Delete runs first
+  await prisma.user.deleteMany();     // Delete users
+  await prisma.agent.deleteMany();    // Then delete agents
 
   const user = await prisma.user.create({
     data: { email: "demo@example.com", name: "Demo User" },

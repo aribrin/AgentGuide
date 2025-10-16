@@ -3,16 +3,17 @@ import Dashboard from './Dashboard';
 
 const Layout: React.FC = () => {
   const [apiKey, setApiKey] = useState(localStorage.getItem('apiKey') || '');
+  const [submitted, setSubmitted] = useState(!!localStorage.getItem('apiKey'));
 
   const handleApiKeySubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (apiKey.trim()) {
       localStorage.setItem('apiKey', apiKey.trim());
-      window.location.reload();
+      setSubmitted(true); // trigger re-render to show Dashboard
     }
   };
 
-  if (!apiKey) {
+  if (!submitted) {
     return (
       <div className="api-key-setup">
         <div className="setup-form">
