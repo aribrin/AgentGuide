@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { RunController } from "../controllers/runController";
 import { StepController } from "../controllers/stepController";
+import { MetricsController } from "../controllers/metricController";
 import { validateBody } from "../middleware/validateRequest";
 import {
   createRunSchema,
@@ -29,5 +30,7 @@ router.patch(
 // --- LIST RUNS ---
 router.get("/runs", RunController.list);
 
+// --- METRICS ---
+router.get("/metrics/summary", MetricsController.summary);
 
 export default router;

@@ -1,16 +1,16 @@
-import express from 'express';
-import agentRoutes from './routes/agentRoutes';
+import express from "express";
+import agentRoutes from "./routes/agentRoutes";
 import runRoutes from "./routes/runRoutes";
-
+import { authenticateApiKey } from "./middleware/auth"; 
 
 const app = express();
 
-// Middleware to parse JSON requests
 app.use(express.json());
 
-// Use the agent routes
-app.use('/v1/agents', agentRoutes);
-app.use("/v1", runRoutes);
+// Public routes
+app.use("/agents", agentRoutes);
 
+//  Protected routes (everything under /v1 requires API key)
+app.use("/v1", authenticateApiKey, runRoutes);
 
 export default app;

@@ -5,7 +5,16 @@ import { listRunsQuerySchema } from "../validation/querySchemas";
 export const RunController = {
   async create(req: Request, res: Response) {
     try {
-      const run = await RunService.createRun(req.body);
+      const { agentId, input } = req.body;
+      const user = (req as any).user; // set by authenticateApiKey middleware
+
+      const run = await RunService.createRun({
+        agentId,
+        userId: user?.id, // automatically associate the run with the authenticated user
+        input,
+      });
+      console.log("Authenticated user:", (req as any).user);
+
       res.status(201).json(run);
     } catch (err) {
       console.error(err);
