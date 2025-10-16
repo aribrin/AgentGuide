@@ -24,3 +24,10 @@ export const updateStepSchema = z.object({
   error: z.string().optional(),
   finishedAt: z.coerce.date().optional(),
 });
+
+// Update Run schema
+export const updateRunSchema = z.object({
+  status: z.enum(["PENDING", "RUNNING", "SUCCESS", "FAILED", "CANCELLED"]).optional(),
+  output: z.record(z.string(), z.any()).optional(),
+  finishedAt: z.coerce.date().optional(),
+});

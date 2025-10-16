@@ -7,6 +7,7 @@ import {
   createRunSchema,
   createStepSchema,
   updateStepSchema,
+  updateRunSchema,
 } from "../validation/runSchemas";
 
 const router = Router();
@@ -14,6 +15,7 @@ const router = Router();
 // --- RUNS ---
 router.post("/runs", validateBody(createRunSchema), RunController.create);
 router.get("/runs/:runId", RunController.getOne);
+router.patch("/runs/:runId", validateBody(updateRunSchema), RunController.update);
 
 // --- STEPS ---
 router.post(

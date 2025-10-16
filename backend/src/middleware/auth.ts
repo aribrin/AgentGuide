@@ -9,7 +9,7 @@ export async function authenticateApiKey(
   const apiKey = req.header("x-api-key");
 
   if (!apiKey) {
-    res.status(401).json({ error: "Missing API key" });
+    res.status(401).json({ error: "API key is required" });
     return; 
   }
 
@@ -18,7 +18,7 @@ export async function authenticateApiKey(
   });
 
   if (!user) {
-    res.status(403).json({ error: "Invalid API key" });
+    res.status(401).json({ error: "Invalid API key" });
     return;
   }
 

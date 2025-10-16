@@ -16,7 +16,9 @@ export const StepController = {
       const step = await StepService.createStep({
         runId: Number(req.params.runId),
         ...parseResult.data,
-        startedAt: new Date(parseResult.data.startedAt),
+        startedAt: parseResult.data.startedAt instanceof Date 
+          ? parseResult.data.startedAt 
+          : new Date(parseResult.data.startedAt),
       });
 
       return res.status(201).json(step);
@@ -39,7 +41,9 @@ export const StepController = {
       const updateData = {
         ...parseResult.data,
         finishedAt: parseResult.data.finishedAt
-          ? new Date(parseResult.data.finishedAt)
+          ? (parseResult.data.finishedAt instanceof Date 
+              ? parseResult.data.finishedAt 
+              : new Date(parseResult.data.finishedAt))
           : undefined,
       };
 
@@ -49,8 +53,12 @@ export const StepController = {
       );
 
       return res.status(200).json(step);
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
+      // P2025 is Prisma's "Record not found" error code
+      if (err.code === "P2025") {
+        return res.status(404).json({ error: "Step not found" });
+      }
       return res.status(500).json({ error: "Failed to update step" });
     }
   },

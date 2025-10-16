@@ -13,7 +13,6 @@ export const RunController = {
         userId: user?.id, // automatically associate the run with the authenticated user
         input,
       });
-      console.log("Authenticated user:", (req as any).user);
 
       res.status(201).json(run);
     } catch (err) {
@@ -60,7 +59,28 @@ export const RunController = {
     }
   },
 
+  async update(req: Request, res: Response) {
+    try {
+      const runId = Number(req.params.runId);
+      const { status, output, finishedAt } = req.body;
 
+      // First check if run exists
+      const existingRun = await RunService.getRun(runId);
+      if (!existingRun) {
+        return res.status(404).json({ error: "Run not found" });
+      }
 
-  
+      // Update the run with provided fields
+      const updatedRun = await RunService.updateRun(runId, {
+        status,
+        output,
+        finishedAt,
+      });
+
+      return res.json(updatedRun);
+    } catch (err) {
+      console.error(err);
+      return res.status(500).json({ error: "Failed to update run" });
+    }
+  },
 };
