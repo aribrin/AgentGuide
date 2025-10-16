@@ -38,6 +38,20 @@ services:
     # Auto-restart on failure
     restart: unless-stopped
 
+  # Frontend Dashboard
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: agentguide-frontend
+    environment:
+      REACT_APP_API_URL: http://localhost:4000
+    ports:
+      - "3001:80"
+    depends_on:
+      - backend
+    restart: unless-stopped
+    
 volumes:
   # Named volume for persistent PostgreSQL data
   postgres_data:
