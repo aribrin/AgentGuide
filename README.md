@@ -25,7 +25,7 @@ docker-compose up --build -d
 docker-compose logs -f backend
 ```
 
-The API will be available at `http://localhost:4000`
+The API will be available at `http://localhost:3000`
 
 ### 2. Seed Demo Data
 
@@ -45,13 +45,13 @@ npx ts-node src/scripts/simulate.ts
 
 ```bash
 # List all runs
-curl http://localhost:4000/v1/runs
+curl http://localhost:3000/v1/runs
 
 # Get a specific run with all steps
-curl http://localhost:4000/v1/runs/1
+curl http://localhost:3000/v1/runs/1
 
 # Get metrics summary
-curl http://localhost:4000/v1/metrics/summary
+curl http://localhost:3000/v1/metrics/summary
 ```
 
 ---
@@ -271,7 +271,7 @@ Here's a complete example of tracking an agent run:
 
 ```bash
 # 1. Create a run
-RUN_ID=$(curl -s -X POST http://localhost:4000/v1/runs \
+RUN_ID=$(curl -s -X POST http://localhost:3000/v1/runs \
   -H "Content-Type: application/json" \
   -H "X-API-Key: demo-key" \
   -d '{
@@ -280,7 +280,7 @@ RUN_ID=$(curl -s -X POST http://localhost:4000/v1/runs \
   }' | jq -r '.id')
 
 # 2. Add first step (web search)
-STEP1_ID=$(curl -s -X POST http://localhost:4000/v1/runs/$RUN_ID/steps \
+STEP1_ID=$(curl -s -X POST http://localhost:3000/v1/runs/$RUN_ID/steps \
   -H "Content-Type: application/json" \
   -H "X-API-Key: demo-key" \
   -d '{
@@ -291,7 +291,7 @@ STEP1_ID=$(curl -s -X POST http://localhost:4000/v1/runs/$RUN_ID/steps \
   }' | jq -r '.id')
 
 # 3. Complete the step
-curl -X PATCH http://localhost:4000/v1/runs/$RUN_ID/steps/$STEP1_ID \
+curl -X PATCH http://localhost:3000/v1/runs/$RUN_ID/steps/$STEP1_ID \
   -H "Content-Type: application/json" \
   -H "X-API-Key: demo-key" \
   -d '{
@@ -300,7 +300,7 @@ curl -X PATCH http://localhost:4000/v1/runs/$RUN_ID/steps/$STEP1_ID \
   }'
 
 # 4. Mark run as complete
-curl -X PATCH http://localhost:4000/v1/runs/$RUN_ID \
+curl -X PATCH http://localhost:3000/v1/runs/$RUN_ID \
   -H "Content-Type: application/json" \
   -H "X-API-Key: demo-key" \
   -d '{
@@ -310,7 +310,7 @@ curl -X PATCH http://localhost:4000/v1/runs/$RUN_ID \
   }'
 
 # 5. View the complete trace
-curl http://localhost:4000/v1/runs/$RUN_ID \
+curl http://localhost:3000/v1/runs/$RUN_ID \
   -H "X-API-Key: demo-key" | jq
 ```
 

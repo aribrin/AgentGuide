@@ -9,10 +9,6 @@
 
 **AgentGuide** is a lightweight monitoring & tracing backend for agentic workflows. It ingests runs from agents (inputs, step-by-step tool calls, outputs, errors, and metrics), stores them in PostgreSQL, exposes REST/GraphQL APIs for querying runs and aggregates, and provides a small UI to inspect traces and KPIs (latency, success rate, common errors).
 
-**Resume line you can add when finished:**
-
-> Built AgentGuide — a Node.js + PostgreSQL observability backend for agentic workflows; implemented normalized run/step schema, API, dashboard, CI/CD, and end-to-end tests; reduced incident triage time in demo by surfacing trace-level errors and latencies.
-
 ## 2) Tech Choices & Structure
 
 - **Backend:** Node.js + TypeScript, Express (or Fastify)
