@@ -55,7 +55,7 @@ export const RunService = {
         ...(filters.agentId ? { agentId: filters.agentId } : {}),
         ...(filters.status ? { status: filters.status as any } : {}),
         },
-        include: { agent: true },
+        include: { agent: true, steps: true },
         orderBy: { createdAt: "desc" },
         take: filters.limit,
         skip: filters.offset,

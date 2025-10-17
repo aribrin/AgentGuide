@@ -7,19 +7,27 @@ import RunsList from './RunsList';
 const Dashboard: React.FC = () => {
   const [metrics, setMetrics] = useState<MetricsSummary | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<'overview' | 'runs' | 'analytics'>('overview');
 
   useEffect(() => {
-    loadMetrics();
+    const controller = new AbortController();
+    loadMetrics(controller.signal);
+    return () => controller.abort();
   }, []);
 
-  const loadMetrics = async () => {
+  const loadMetrics = async (signal?: AbortSignal) => {
     try {
+      setError(null);
       setLoading(true);
-      const data = await apiService.getMetricsSummary();
+      const data = await apiService.getMetricsSummary(undefined, { signal });
       setMetrics(data);
     } catch (error) {
+      if ((error as any)?.code === 'ERR_CANCELED' || (error as any)?.name === 'CanceledError') {
+        return;
+      }
       console.error('Failed to load metrics:', error);
+      setError((error as any)?.message || 'Failed to load metrics');
     } finally {
       setLoading(false);
     }
@@ -30,6 +38,15 @@ const Dashboard: React.FC = () => {
       <div className="dashboard-loading">
         <div className="spinner"></div>
         <p>Loading dashboard...</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="dashboard-error">
+        <p>Failed to load metrics: {error}</p>
+        <button onClick={() => loadMetrics()}>Retry</button>
       </div>
     );
   }

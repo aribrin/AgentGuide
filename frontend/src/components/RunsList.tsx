@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Run } from '../types';
 import { apiService } from '../services/api';
 import RunDetail from './RunDetail';
@@ -6,6 +6,7 @@ import RunDetail from './RunDetail';
 const RunsList: React.FC = () => {
   const [runs, setRuns] = useState<Run[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [selectedRun, setSelectedRun] = useState<Run | null>(null);
   const [filters, setFilters] = useState({
     status: '',
@@ -14,29 +15,41 @@ const RunsList: React.FC = () => {
     offset: 0,
   });
 
-  useEffect(() => {
-    loadRuns();
-  }, [filters]);
 
-  const loadRuns = async () => {
+  const loadRuns = useCallback(async (signal?: AbortSignal) => {
     try {
+      setError(null);
       setLoading(true);
       const queryParams: any = {
         limit: filters.limit,
         offset: filters.offset,
       };
-      
       if (filters.status) queryParams.status = filters.status;
-      if (filters.agentId) queryParams.agentId = filters.agentId;
+      if (filters.agentId) queryParams.agentId = Number(filters.agentId);
 
-      const data = await apiService.getRuns(queryParams);
+      const data = await apiService.getRuns(queryParams, { signal });
       setRuns(data);
-    } catch (error) {
+    } catch (error: any) {
+      if (error?.code === 'ERR_CANCELED' || error?.name === 'CanceledError') {
+        return;
+      }
       console.error('Failed to load runs:', error);
+      setError(error?.message || 'Failed to load runs');
     } finally {
       setLoading(false);
     }
-  };
+  }, [filters]);
+
+  useEffect(() => {
+    const controller = new AbortController();
+    loadRuns(controller.signal);
+    return () => controller.abort();
+  }, [loadRuns]);
+
+  // add a stable retry handler that calls loadRuns
+  const handleRetry = useCallback(() => {
+    loadRuns();
+  }, [loadRuns]);
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -61,6 +74,19 @@ const RunsList: React.FC = () => {
 
   if (loading) {
     return <div className="loading">Loading runs...</div>;
+  }
+
+  if (error) {
+    return (
+      <div className="error">
+        <p>Failed to load runs: {error}</p>
+        <button onClick={handleRetry}>Retry</button>
+      </div>
+    );
+  }
+
+  if (!loading && runs.length === 0) {
+    return <div className="empty">No runs found.</div>;
   }
 
   return (
