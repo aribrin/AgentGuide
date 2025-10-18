@@ -180,7 +180,7 @@ body {
 
 .runs-layout {
   display: grid;
-  grid-template-columns: 1fr 2fr;
+  grid-template-columns: 1.5fr 1.5fr;
   gap: 20px;
 }
 
@@ -192,7 +192,14 @@ body {
 
 .runs-list-header {
   display: grid;
-  grid-template-columns: 80px 1fr 100px 80px 60px 100px;
+  grid-template-columns: 
+    minmax(50px, 0.4fr)   /* Run ID */
+    minmax(90px, 1fr)     /* Agent */
+    minmax(75px, 0.8fr)   /* Status */
+    minmax(70px, 0.7fr)   /* Duration */
+    minmax(60px, 0.6fr)   /* Steps */
+    minmax(150px, 1.5fr); /* Started */
+
   gap: 10px;
   padding: 15px;
   background: #e9ecef;
@@ -202,9 +209,24 @@ body {
   letter-spacing: 0.5px;
 }
 
+.runs-list-header div,
+.run-item div {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
+}
+
 .run-item {
   display: grid;
-  grid-template-columns: 80px 1fr 100px 80px 60px 100px;
+  grid-template-columns:
+    minmax(50px, 0.4fr)   /* Run ID */
+    minmax(90px, 1fr)     /* Agent */
+    minmax(75px, 0.8fr)   /* Status */
+    minmax(70px, 0.7fr)   /* Duration */
+    minmax(60px, 0.6fr)   /* Steps */
+    minmax(150px, 1.5fr); /* Started */
+
   gap: 10px;
   padding: 15px;
   border-bottom: 1px solid #e9ecef;
@@ -435,18 +457,19 @@ body {
   }
   
   .runs-layout {
-    grid-template-columns: 1fr;
+    display: grid;
+    grid-template-columns: 1.3fr 1.7fr;
+    gap: 20px;
+    min-width: 0; /* critical for preventing overflow clipping */
   }
+
   
   .metrics-charts {
     grid-template-columns: 1fr;
   }
   
-  .runs-list-header,
-  .run-item {
-    grid-template-columns: 60px 1fr 80px 60px 50px 80px;
-    font-size: 11px;
-  }
+
+
   
   .info-grid {
     grid-template-columns: 1fr;
