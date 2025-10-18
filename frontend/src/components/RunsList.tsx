@@ -85,9 +85,8 @@ const RunsList: React.FC = () => {
     );
   }
 
-  if (!loading && runs.length === 0) {
-    return <div className="empty">No runs found.</div>;
-  }
+  // Do not return early when there are no runs so filters remain visible
+  // We'll render an in-list empty state below.
 
   return (
     <div className="runs-container">
@@ -118,24 +117,28 @@ const RunsList: React.FC = () => {
             <div>Started</div>
           </div>
           
-          {runs.map((run) => (
-            <div 
-              key={run.id} 
-              className={`run-item ${selectedRun?.id === run.id ? 'selected' : ''}`}
-              onClick={() => setSelectedRun(run)}
-            >
-              <div>#{run.id}</div>
-              <div>{run.agent.name}</div>
-              <div>
-                <span className={`status-badge ${getStatusColor(run.status)}`}>
-                  {run.status}
-                </span>
+          {runs.length === 0 ? (
+            <div className="empty">No runs found for selected filters.</div>
+          ) : (
+            runs.map((run) => (
+              <div 
+                key={run.id} 
+                className={`run-item ${selectedRun?.id === run.id ? 'selected' : ''}`}
+                onClick={() => setSelectedRun(run)}
+              >
+                <div>#{run.id}</div>
+                <div>{run.agent.name}</div>
+                <div>
+                  <span className={`status-badge ${getStatusColor(run.status)}`}>
+                    {run.status}
+                  </span>
+                </div>
+                <div>{formatDuration(run.startedAt, run.finishedAt || undefined)}</div>
+                <div>{run.steps.length}</div>
+                <div>{new Date(run.startedAt).toLocaleTimeString()}</div>
               </div>
-              <div>{formatDuration(run.startedAt, run.finishedAt || undefined)}</div>
-              <div>{run.steps.length}</div>
-              <div>{new Date(run.startedAt).toLocaleTimeString()}</div>
-            </div>
-          ))}
+            ))
+          )}
         </div>
 
         <div className="run-detail-panel">
