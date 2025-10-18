@@ -37,6 +37,11 @@ function notifyApiError(err: ApiErrorInfo) {
 api.interceptors.response.use(
   (response) => response,
   (error) => {
+    // Skip notifying about intentional cancellations
+    if (error?.code === 'ERR_CANCELED' || error?.name === 'CanceledError' || error?.name === 'AbortError') {
+      return Promise.reject(error);
+    }
+    
     const status = error.response?.status as number | undefined;
     const message =
       error.response?.data?.error ||
