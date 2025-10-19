@@ -45,13 +45,13 @@ npx ts-node src/scripts/simulate.ts
 
 ```bash
 # List all runs
-curl http://localhost:3000/v1/runs
+curl http://localhost:3001/v1/runs
 
 # Get a specific run with all steps
-curl http://localhost:3000/v1/runs/1
+curl http://localhost:3001/v1/runs/1
 
 # Get metrics summary
-curl http://localhost:3000/v1/metrics/summary
+curl http://localhost:3001/v1/metrics/summary
 ```
 
 ---
@@ -316,47 +316,6 @@ curl http://localhost:3000/v1/runs/$RUN_ID \
 
 ---
 
-## 🎯 Use Cases
-
-### 1. Debugging Failed Runs
-```sql
--- Find all failed runs with error details
-SELECT r.id, r.startedAt, s.toolName, s.error
-FROM "Run" r
-JOIN "Step" s ON s.runId = r.id
-WHERE s.error IS NOT NULL
-ORDER BY r.startedAt DESC
-LIMIT 10;
-```
-
-### 2. Performance Analysis
-```sql
--- Average duration per tool
-SELECT 
-  toolName,
-  AVG(EXTRACT(EPOCH FROM (finishedAt - startedAt))) as avg_seconds,
-  COUNT(*) as call_count
-FROM "Step"
-WHERE finishedAt IS NOT NULL
-GROUP BY toolName
-ORDER BY avg_seconds DESC;
-```
-
-### 3. Success Rate by Agent
-```sql
--- Success rate per agent (last 24 hours)
-SELECT 
-  a.name,
-  COUNT(*) as total_runs,
-  SUM(CASE WHEN r.status = 'SUCCESS' THEN 1 ELSE 0 END) as successful,
-  ROUND(SUM(CASE WHEN r.status = 'SUCCESS' THEN 1 ELSE 0 END)::numeric / COUNT(*) * 100, 2) as success_rate
-FROM "Run" r
-JOIN "Agent" a ON a.id = r.agentId
-WHERE r.startedAt >= NOW() - INTERVAL '24 hours'
-GROUP BY a.name;
-```
-
----
 
 ## 🚀 Tech Stack
 
