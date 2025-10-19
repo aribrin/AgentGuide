@@ -4,11 +4,13 @@ import { MetricsService } from "../services/metricsService";
 export const MetricsController = {
   async summary(req: Request, res: Response) {
     try {
-      const { agentId, from, to } = req.query;
+      // Use validated query data from middleware
+      const validatedQuery = (req as any).validatedQuery || {};
+      const { agentId, from, to } = validatedQuery;
       const summary = await MetricsService.getSummary(
-        agentId ? Number(agentId) : undefined,
-        from ? String(from) : undefined,
-        to ? String(to) : undefined
+        agentId,
+        from,
+        to
       );
       res.json(summary);
     } catch (err) {

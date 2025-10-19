@@ -1,12 +1,13 @@
 import React from 'react';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell, PieChart, Pie, Legend, LineChart, Line } from 'recharts';
 import { MetricsSummary } from '../types';
 
 interface MetricsChartProps {
   metrics: MetricsSummary;
+  timeSeriesData?: Array<{ date: string; runs: number; successRate: number }>;
 }
 
-const MetricsChart: React.FC<MetricsChartProps> = ({ metrics }) => {
+const MetricsChart: React.FC<MetricsChartProps> = ({ metrics, timeSeriesData }) => {
   // Create chart data from the actual metrics
   const chartData = [
     {
@@ -45,6 +46,12 @@ const MetricsChart: React.FC<MetricsChartProps> = ({ metrics }) => {
       value: metrics.avgStepsPerRun,
       color: '#8dd1e1',
     },
+  ];
+
+  // Status distribution pie chart data
+  const statusData = [
+    { name: 'Success', value: metrics.successRate, color: '#28a745' },
+    { name: 'Failed', value: 100 - metrics.successRate, color: '#dc3545' },
   ];
 
   return (
@@ -99,6 +106,47 @@ const MetricsChart: React.FC<MetricsChartProps> = ({ metrics }) => {
           </BarChart>
         </ResponsiveContainer>
       </div>
+
+
+      {timeSeriesData && timeSeriesData.length > 1 && (
+        <div className="chart-container full-width">
+          <h4>Runs Over Time (Last 7 Days)</h4>
+          <ResponsiveContainer width="100%" height={250}>
+            <LineChart data={timeSeriesData}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis 
+                dataKey="date" 
+                tick={{ fontSize: 12 }}
+                angle={-45}
+                textAnchor="end"
+                height={70}
+              />
+              <YAxis yAxisId="left" />
+              <YAxis yAxisId="right" orientation="right" domain={[0, 100]} />
+              <Tooltip />
+              <Legend />
+              <Line
+                yAxisId="left"
+                type="monotone"
+                dataKey="runs"
+                stroke="#8884d8"
+                strokeWidth={2}
+                name="Total Runs"
+                dot={{ r: 4 }}
+              />
+              <Line
+                yAxisId="right"
+                type="monotone"
+                dataKey="successRate"
+                stroke="#28a745"
+                strokeWidth={2}
+                name="Success Rate (%)"
+                dot={{ r: 4 }}
+              />
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
+      )}
     </div>
   );
 };

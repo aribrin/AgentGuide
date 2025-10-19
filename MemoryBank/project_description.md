@@ -269,16 +269,16 @@ Create a short reproducible demo script + artifacts to show.
 
 ```bash
 # create run
-curl -X POST http://localhost:4000/v1/runs -H "Content-Type: application/json" -d '{"agentId":1, "input":{"prompt":"fetch facts"}}'
+curl -X POST http://localhost:3001/v1/runs -H "Content-Type: application/json" -d '{"agentId":1, "input":{"prompt":"fetch facts"}}'
 
 # add step
-curl -X POST http://localhost:4000/v1/runs/1/steps -d '{"toolName":"search","index":0,"input":{"q":"climate data"}}'
+curl -X POST http://localhost:3001/v1/runs/1/steps -d '{"toolName":"search","index":0,"input":{"q":"climate data"}}'
 
 # finalize step
-curl -X PATCH http://localhost:4000/v1/runs/1/steps/1 -d '{"output":{"results": []}, "finishedAt":"2025-10-12T12:34:00Z"}'
+curl -X PATCH http://localhost:3001/v1/runs/1/steps/1 -d '{"output":{"results": []}, "finishedAt":"2025-10-12T12:34:00Z"}'
 
 # mark run success
-curl -X PATCH http://localhost:4000/v1/runs/1 -d '{"status":"SUCCESS", "finishedAt":"2025-10-12T12:35:00Z"}'
+curl -X PATCH http://localhost:3001/v1/runs/1 -d '{"status":"SUCCESS", "finishedAt":"2025-10-12T12:35:00Z"}'
 ```
 
 ## 8) Useful SQL Queries for Metrics & Example Outputs

@@ -2,13 +2,14 @@ import { Router } from "express";
 import { RunController } from "../controllers/runController";
 import { StepController } from "../controllers/stepController";
 import { MetricsController } from "../controllers/metricController";
-import { validateBody } from "../middleware/validateRequest";
+import { validateBody, validateQuery } from "../middleware/validateRequest";
 import {
   createRunSchema,
   createStepSchema,
   updateStepSchema,
   updateRunSchema,
 } from "../validation/runSchemas";
+import { metricsSummaryQuerySchema } from "../validation/querySchemas";
 
 const router = Router();
 
@@ -33,6 +34,6 @@ router.patch(
 router.get("/runs", RunController.list);
 
 // --- METRICS ---
-router.get("/metrics/summary", MetricsController.summary);
+router.get("/metrics/summary", validateQuery(metricsSummaryQuerySchema), MetricsController.summary);
 
 export default router;

@@ -162,8 +162,8 @@ async function simulate(runs: number, errorRate: number) {
   console.log(`   Success: ${successCount} runs (${((successCount / runs) * 100).toFixed(1)}%)`);
   console.log(`   Failed: ${failureCount} runs (${((failureCount / runs) * 100).toFixed(1)}%)`);
   console.log(`\n💡 Try these queries:`);
-  console.log(`   curl http://localhost:4000/v1/metrics/summary`);
-  console.log(`   curl http://localhost:4000/v1/runs?status=FAILED`);
+  console.log(`   curl http://localhost:3001/v1/metrics/summary`);
+  console.log(`   curl http://localhost:3001/v1/runs?status=FAILED`);
 }
 
 // Run simulation
