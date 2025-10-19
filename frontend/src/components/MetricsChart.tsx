@@ -1,89 +1,101 @@
-import React, { useState, useEffect } from 'react';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar } from 'recharts';
-import { apiService } from '../services/api';
+import React from 'react';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
+import { MetricsSummary } from '../types';
 
-interface ChartDataPoint {
-  time: string;
-  runs: number;
-  successRate: number;
-  avgDuration: number;
+interface MetricsChartProps {
+  metrics: MetricsSummary;
 }
 
-const MetricsChart: React.FC = () => {
-  const [data, setData] = useState<ChartDataPoint[]>([]);
-  const [loading, setLoading] = useState(true);
+const MetricsChart: React.FC<MetricsChartProps> = ({ metrics }) => {
+  // Create chart data from the actual metrics
+  const chartData = [
+    {
+      name: 'Total Runs',
+      value: metrics.totalRuns,
+      color: '#8884d8',
+    },
+    {
+      name: 'Total Steps',
+      value: metrics.totalSteps,
+      color: '#82ca9d',
+    },
+  ];
 
-  useEffect(() => {
-    loadChartData();
-  }, []);
+  const ratesData = [
+    {
+      name: 'Success Rate',
+      value: metrics.successRate,
+      color: '#82ca9d',
+    },
+    {
+      name: 'Failure Rate',
+      value: 100 - metrics.successRate,
+      color: '#ff8042',
+    },
+  ];
 
-  const loadChartData = async () => {
-    try {
-      setLoading(true);
-      // For demo purposes, generate some sample data
-      // In a real app, you'd fetch historical metrics from your backend
-      const sampleData: ChartDataPoint[] = [];
-      const now = new Date();
-      
-      for (let i = 23; i >= 0; i--) {
-        const time = new Date(now.getTime() - i * 60 * 60 * 1000);
-        sampleData.push({
-          time: time.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
-          runs: Math.floor(Math.random() * 20) + 5,
-          successRate: Math.random() * 30 + 70, // 70-100%
-          avgDuration: Math.random() * 2000 + 1000, // 1-3s
-        });
-      }
-      
-      setData(sampleData);
-    } catch (error) {
-      console.error('Failed to load chart data:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  if (loading) {
-    return <div className="chart-loading">Loading charts...</div>;
-  }
+  const performanceData = [
+    {
+      name: 'Avg Duration (s)',
+      value: (metrics.avgDurationMs / 1000),
+      color: '#ffc658',
+    },
+    {
+      name: 'Avg Steps/Run',
+      value: metrics.avgStepsPerRun,
+      color: '#8dd1e1',
+    },
+  ];
 
   return (
     <div className="metrics-charts">
       <div className="chart-container">
-        <h4>Runs Over Time</h4>
+        <h4>Run & Step Counts</h4>
         <ResponsiveContainer width="100%" height={200}>
-          <LineChart data={data}>
+          <BarChart data={chartData}>
             <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="time" />
+            <XAxis dataKey="name" />
             <YAxis />
             <Tooltip />
-            <Line type="monotone" dataKey="runs" stroke="#8884d8" strokeWidth={2} />
-          </LineChart>
+            <Bar dataKey="value">
+              {chartData.map((entry, index) => (
+                <Cell key={`cell-${index}`} fill={entry.color} />
+              ))}
+            </Bar>
+          </BarChart>
         </ResponsiveContainer>
       </div>
 
       <div className="chart-container">
-        <h4>Success Rate Trend</h4>
+        <h4>Success vs Failure Rate (%)</h4>
         <ResponsiveContainer width="100%" height={200}>
-          <LineChart data={data}>
+          <BarChart data={ratesData}>
             <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="time" />
+            <XAxis dataKey="name" />
             <YAxis domain={[0, 100]} />
-            <Tooltip formatter={(value) => [`${Number(value).toFixed(1)}%`, 'Success Rate']} />
-            <Line type="monotone" dataKey="successRate" stroke="#82ca9d" strokeWidth={2} />
-          </LineChart>
+            <Tooltip formatter={(value) => [`${Number(value).toFixed(1)}%`, 'Rate']} />
+            <Bar dataKey="value">
+              {ratesData.map((entry, index) => (
+                <Cell key={`cell-${index}`} fill={entry.color} />
+              ))}
+            </Bar>
+          </BarChart>
         </ResponsiveContainer>
       </div>
 
       <div className="chart-container">
-        <h4>Average Duration</h4>
+        <h4>Performance Metrics</h4>
         <ResponsiveContainer width="100%" height={200}>
-          <BarChart data={data}>
+          <BarChart data={performanceData}>
             <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="time" />
+            <XAxis dataKey="name" />
             <YAxis />
-            <Tooltip formatter={(value) => [`${(value as number / 1000).toFixed(1)}s`, 'Avg Duration']} />
-            <Bar dataKey="avgDuration" fill="#ffc658" />
+            <Tooltip formatter={(value) => [Number(value).toFixed(2), '']} />
+            <Bar dataKey="value">
+              {performanceData.map((entry, index) => (
+                <Cell key={`cell-${index}`} fill={entry.color} />
+              ))}
+            </Bar>
           </BarChart>
         </ResponsiveContainer>
       </div>

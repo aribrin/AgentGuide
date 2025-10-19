@@ -97,7 +97,7 @@ const Dashboard: React.FC = () => {
               <div className="metric-value">{metrics.avgStepsPerRun.toFixed(1)}</div>
             </div>
           </div>
-          <MetricsChart />
+          <MetricsChart metrics={metrics} />
         </div>
       )}
 
