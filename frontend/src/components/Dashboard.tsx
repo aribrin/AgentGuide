@@ -3,6 +3,7 @@ import { MetricsSummary } from '../types';
 import { apiService } from '../services/api';
 import MetricsChart from './MetricsChart';
 import RunsList from './RunsList';
+import Analytics from './Analytics';
 
 const Dashboard: React.FC = () => {
   const [metrics, setMetrics] = useState<MetricsSummary | null>(null);
@@ -106,10 +107,7 @@ const Dashboard: React.FC = () => {
       )}
 
       {activeTab === 'analytics' && (
-        <div className="analytics-tab">
-          <h2>Advanced Analytics</h2>
-          <p>Coming soon: Detailed performance analysis, error patterns, and optimization insights.</p>
-        </div>
+        <Analytics />
       )}
     </div>
   );
