@@ -66,6 +66,129 @@ body {
   font-size: 14px;
 }
 
+/* Topbar */
+.topbar {
+  display: flex;
+  align-items: center;
+  padding: 15px 20px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
+  border-radius: 10px;
+}
+
+.brand {
+  font-size: 24px;
+  font-weight: bold;
+  color: white;
+  letter-spacing: 0.5px;
+}
+
+.spacer {
+  flex: 1;
+}
+
+.connectivity {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 20px;
+  color: white;
+  font-size: 14px;
+  font-weight: 500;
+  margin-right: 15px;
+  backdrop-filter: blur(10px);
+}
+
+.status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+.connectivity.checking .status-dot {
+  background: #ffc107;
+}
+
+.connectivity.good .status-dot {
+  background: #28a745;
+}
+
+.connectivity.degraded .status-dot {
+  background: #ff9800;
+}
+
+.connectivity.offline .status-dot {
+  background: #dc3545;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.signout-btn {
+  background: rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: white;
+  padding: 10px 20px;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+}
+
+.signout-btn:hover {
+  background: rgba(255, 255, 255, 0.3);
+  border-color: rgba(255, 255, 255, 0.5);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.signout-btn:active {
+  transform: translateY(0);
+}
+
+/* Error Banner */
+.error-banner {
+  background: #f8d7da;
+  color: #721c24;
+  padding: 15px 20px;
+  margin-bottom: 20px;
+  border-radius: 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border: 1px solid #f5c6cb;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.dismiss-btn {
+  background: transparent;
+  border: 1px solid #721c24;
+  color: #721c24;
+  padding: 6px 12px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+
+.dismiss-btn:hover {
+  background: #721c24;
+  color: white;
+}
+
 /* Dashboard */
 .dashboard {
   background: white;
